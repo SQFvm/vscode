@@ -21,6 +21,7 @@ Preprocesses, compiles and runs the current file. Output of commands like `diag_
 
 # Backend
 This extension is powered by SQF-VM. For general functionality issues, please refer to SQF-VM.
+For stand-alone SQF-VM, see (https://github.com/SQFvm/vm).
 
 # Authors
 SQF-VM by @X39

@@ -1,0 +1,60 @@
+{
+	"name": "sqf-vm-vscode",
+	"displayName": "SQF-VM VSCode extension",
+	"description": "Provides tasks to run SQF scripts in VSCode with SQF-VM by X39",
+	"version": "0.0.1",
+	"publisher": "Sparker95",
+	"enableProposedApi": "true",
+	"engines": {
+		"vscode": "^1.39.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:workbench.action.tasks.runTask"
+	],
+	"main": "./out/extension",
+	"contributes": {
+		"taskDefinitions": [
+			{
+				"type": "sqf_vm_compile"
+			},
+			{
+				"type": "sqf_vm_preprocess"
+			},
+			{
+				"type": "sqf_vm_run"
+			}
+		],
+		"problemMatchers": [
+			{
+				"name": "sqf_vm_abs",
+				"owner": "sqf",
+				"fileLocation": "absolute",
+				"pattern": [
+					{
+						"regexp": "\\[(RNT|WRN|ERR)\\]\\[L?(.+)\\|C(.+)\\|([a-zA-Z]\\:.*?)\\](.*)",
+						"line": 2,
+						"column": 3,
+						"severity": 1,
+						"file": 4,
+						"message": 5
+					}
+				]
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w"
+	},
+	"devDependencies": {
+		"@types/node": "^8.0.0",
+		"tslint": "^5.16.0",
+		"typescript": "^3.5.1",
+		"@types/vscode": "^1.39.0"
+	},
+	"dependencies": {}
+}

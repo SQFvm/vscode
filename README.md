@@ -21,5 +21,7 @@ This extension is powered by SQF-VM. For general functionality issues, please re
 
 # Authors
 SQF-VM by @X39
+
 Task configuration done by @billw2012
+
 Extension by @Sperker95

@@ -2,7 +2,7 @@
 	"name": "sqf-vm-vscode",
 	"displayName": "SQF-VM",
 	"description": "Allows to run, compile and preprocess SQF scripts in VS Code",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "Sparker95",
 	"repository": {
 		"type": "git",

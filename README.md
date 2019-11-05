@@ -3,6 +3,9 @@
 This extension provides a few tasks to run SQF-VM in different modes from your VSCode.
 Obvious application is to run SQF right in your editor, without any need to run Arma. Also you can compile your script to detect compilation and preprocessor errors prior to testing it in-game.
 
+# How to use
+While in VSCode, press F1, select "Tasks: Run Task", then select one of the following tasks:
+
 #### SQF-VM: Preprocess
 Runs preprocessor on the current file.
 
@@ -18,6 +21,7 @@ Preprocesses, compiles and runs the current file. Output of commands like `diag_
 
 # Backend
 This extension is powered by SQF-VM. For general functionality issues, please refer to SQF-VM.
+For stand-alone SQF-VM, see (https://github.com/SQFvm/vm).
 
 # Authors
 SQF-VM by @X39

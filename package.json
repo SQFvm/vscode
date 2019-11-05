@@ -1,9 +1,14 @@
 {
 	"name": "sqf-vm-vscode",
-	"displayName": "SQF-VM VSCode extension",
+	"displayName": "SQF-VM",
 	"description": "Provides tasks to run SQF scripts in VSCode with SQF-VM by X39",
 	"version": "0.0.1",
 	"publisher": "Sparker95",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/SQFvm/vscode"
+	},
+
 	"enableProposedApi": "true",
 	"engines": {
 		"vscode": "^1.39.0"
@@ -15,6 +20,7 @@
 		"onCommand:workbench.action.tasks.runTask"
 	],
 	"main": "./out/extension",
+
 	"contributes": {
 		"taskDefinitions": [
 			{
@@ -45,16 +51,19 @@
 			}
 		]
 	},
+
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -b",
 		"watch": "tsc -b -w"
 	},
+
 	"devDependencies": {
 		"@types/node": "^8.0.0",
 		"tslint": "^5.16.0",
 		"typescript": "^3.5.1",
 		"@types/vscode": "^1.39.0"
 	},
+	
 	"dependencies": {}
 }

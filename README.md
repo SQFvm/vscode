@@ -24,4 +24,4 @@ SQF-VM by @X39
 
 Task configuration done by @billw2012
 
-Extension by @Sperker95
+Extension by @Sparker95

@@ -33,6 +33,7 @@ if (true) then {
 
 };
 
+
 // -- Exit the machine and destroy it, run any exit code if it exists (It doesn't by default)
 if (_newState isEqualTo "exit") exitWith
 {

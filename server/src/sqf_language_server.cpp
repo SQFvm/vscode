@@ -130,12 +130,15 @@ std::optional<lsp::data::completion_list> sqf_language_server::on_textDocument_c
     // Get navigation token
     auto& doc = get_or_create(params.textDocument.uri);
     auto nav_o = doc.navigate(params.position.line, params.position.character);
-    if (!nav_o.has_value()) { /* ToDo: Return default completion_list instead of empty results */ return {}; }
+
+    if (!nav_o.has_value()) {
+        return m_completion->as_completion_list();
+    };
 
     // ToDo: Handle the different astnode tokens for extended completion (eg. for `addAction [@p1, @p2, @p3, @p4, ...]` the different parameters inside of the list)
 
     // ToDo: Return slide of default completion_list instead of empty results
-    return {};
+    return m_completion->as_completion_list();
 }
 
 text_document& sqf_language_server::get_or_create(lsp::data::uri uri)

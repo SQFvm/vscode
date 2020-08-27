@@ -4,6 +4,7 @@
 #include "language_server_logger.h"
 #include "text_document.h"
 #include "git_sha1.h"
+#include "completion.h"
 
 #include <runtime/runtime.h>
 
@@ -30,7 +31,10 @@ protected:
         res.capabilities.foldingRangeProvider = lsp::data::initialize_result::server_capabilities::folding_range_registration_options{};
         res.capabilities.foldingRangeProvider->documentSelector = lsp::data::document_filter{ };
         res.capabilities.foldingRangeProvider->documentSelector->language = "sqf";
-        // res.capabilities.completionProvider = lsp::data::initialize_result::server_capabilities::completion_options{};
+
+        // Completion provider. Provides build in functions and commands
+        res.capabilities.completionProvider = lsp::data::initialize_result::server_capabilities::completion_options{};
+        res.capabilities.completionProvider->resolveProvider = true;
         
         return res;
     }
@@ -39,7 +43,6 @@ protected:
     // After Initialize
     virtual void after_initialize(const lsp::data::initialize_params& params) override;
     virtual void on_textDocument_didChangeConfiguration(const lsp::data::did_change_configuration_params& params) override;
-
     virtual void on_textDocument_didChange(const lsp::data::did_change_text_document_params& params) override;
     virtual std::optional<std::vector<lsp::data::folding_range>> on_textDocument_foldingRange(const lsp::data::folding_range_params& params) override;
     virtual std::optional<lsp::data::completion_list> on_textDocument_completion(const lsp::data::completion_params& params);
@@ -47,12 +50,13 @@ protected:
     // ToDo: Add the ability to reload the config instead of just disabling it using this workaround
     bool m_read_config;
 public:
+    Completion* m_completion;
     std::vector<variable_declaration::sptr> global_declarations;
     std::unordered_map<std::string, text_document> text_documents;
     lsp::data::initialize_params client;
     language_server_logger logger;
     sqf::runtime::runtime sqfvm;
-    sqf_language_server() : logger(*this), sqfvm(logger, {}), m_read_config(false) {}
+    sqf_language_server() : logger(*this), sqfvm(logger, {}), m_read_config(false), m_completion(new Completion()) {}
     sqf_language_server(const sqf_language_server& copy) = delete;
 
     text_document& get_or_create(lsp::data::uri uri);

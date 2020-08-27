@@ -1229,7 +1229,8 @@ namespace lsp
              * an icon is chosen by the editor. The standardized set
              * of available values is defined in `CompletionItemKind`.
              */
-            std::optional<size_t> kind;
+            std::optional<completion_item_kind> kind;
+            //std::optional<size_t> kind;
 
             /**
              * Tags for this completion item.

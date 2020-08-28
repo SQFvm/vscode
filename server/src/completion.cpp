@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
+#include <sstream>
 
 Completion::Completion() {
 	m_index = 0;
@@ -50,43 +51,39 @@ lsp::data::completion_item Completion::create_suggestion(nlohmann::json& command
  * \return
  */
 lsp::data::markup_content Completion::hint_former(nlohmann::json& command) {
-	std::vector<std::string> hint = {
-		"```sqf",
-		command["syntax"].get<std::string>(),
-		"```"
-	};
+	std::stringstream sstream;
+
+	sstream <<
+		"```sqf" << std::endl <<
+		command["syntax"].get<std::string>() << std::endl <<
+		"```" << std::endl;
 
 	// add the arguments per line (Or None)
-	hint.push_back("**Arguments**");
+	sstream << "**Arguments**" << std::endl;
 	if (command["parameters"].size() == 0) {
-		hint.push_back("* None");
+		sstream << "* None" << std::endl;
 	} else {
 		for (std::string arg : command["parameters"]) {
-			hint.push_back("* " + arg);
+			sstream << "* " << arg << std::endl;
 		};
 	};
 
 	// add return values per line (Or None)
-	hint.push_back("\n**Return**");
+	sstream << "**Return**" << std::endl;
 	if (command["return_value"].size() == 0) {
-		hint.push_back("* None");
+		sstream << "* None" << std::endl;
 	} else {
 		for (std::string arg : command["return_value"]) {
-			hint.push_back("* " + arg);
+			sstream << "* " << arg << std::endl;
 		};
 	};
 
 	// add clickable link for the description
 	// broken, needs casting? Who knows
-	hint.push_back("\n[Description](" + command["url"].get<std::string>() + ')');
+	sstream << "[Description](" << command["url"].get<std::string>() << ')' << std::endl;
 
 	// join with linebreaks
-	std::string hint_joined = std::accumulate(std::next(hint.begin()), hint.end(), hint[0],
-		[](std::string a, std::string b) {
-			return a + "\n" + b;
-		}
-	);
-	return lsp::data::markup_content{ lsp::data::markup_kind::Markdown, hint_joined };
+	return lsp::data::markup_content{ lsp::data::markup_kind::Markdown, sstream.str() };
 };
 
 /**

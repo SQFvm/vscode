@@ -126,19 +126,47 @@ std::optional<std::vector<lsp::data::folding_range>> sqf_language_server::on_tex
 
 std::optional<lsp::data::completion_list> sqf_language_server::on_textDocument_completion(const lsp::data::completion_params& params)
 {
-    
-    // Get navigation token
     auto& doc = get_or_create(params.textDocument.uri);
-    auto nav_o = doc.navigate(params.position.line, params.position.character);
 
-    if (!nav_o.has_value()) {
-        return m_completion->as_completion_list();
-    };
+    // // Get navigation token
+    // auto nav_o = doc.navigate(params.position.line, params.position.character);
+    // 
+    // if (!nav_o.has_value()) {
+    //     // Compute from empty input
+    //     m_completion.compute(global_declarations, {});
+    // 
+    //     return m_completion.as_completion_list();
+    // };
+    // // ToDo: Handle the different astnode tokens for extended completion (eg. for `addAction [@p1, @p2, @p3, @p4, ...]` the different parameters inside of the list)
+    // 
+    // // Compute from nav node
+    // m_completion.compute(global_declarations, );
+    // 
+    // return m_completion.as_completion_list();
 
-    // ToDo: Handle the different astnode tokens for extended completion (eg. for `addAction [@p1, @p2, @p3, @p4, ...]` the different parameters inside of the list)
 
-    // ToDo: Return slide of default completion_list instead of empty results
-    return m_completion->as_completion_list();
+    // Find end in current document
+    auto contents = doc.contents(false);
+
+    // Lookup correct line
+    size_t index = 0;
+    size_t line = 0;
+    while (line != params.position.line && index != std::string_view::npos)
+    {
+        index = contents.find('\n', index + 1);
+        line++;
+    }
+
+    // Add column to index
+    index += params.position.character;
+
+    // Find first "invalid" character
+    auto end = contents.find_first_not_of("abcdefghijklmnopqrstuvwxyz0123456789_", index);
+    auto len = end == std::string_view::npos ? (contents.length() - index) : (end - index);
+
+    // Compute results & return
+    m_completion.compute(global_declarations, std::string_view(contents.data() + index, len));
+    return m_completion.as_completion_list();
 }
 
 text_document& sqf_language_server::get_or_create(lsp::data::uri uri)

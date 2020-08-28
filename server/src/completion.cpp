@@ -4,9 +4,32 @@
 #include <filesystem>
 #include <sstream>
 
-Completion::Completion() {
-	m_index = 0;
-	this->load_json("commands.min.json");
+void Completion::compute(std::vector<variable_declaration::sptr> globals, std::string_view view)
+{
+	// lowercase input
+	std::string data(view);
+	std::transform(data.begin(), data.end(), data.begin(), [](char c) { return (char)std::tolower(c); });
+
+
+	m_completion_live.items.clear();
+	for (auto it : m_completion_items)
+	{
+		// Check if sortText starts with `data`
+		if (it.sortText->rfind(data) == 0)
+		{
+			m_completion_live.items.push_back(it);
+		}
+	}
+
+	for (auto it : globals)
+	{
+		// Check if variable name starts with `data`
+		if (it->variable.rfind(view) == 0)
+		{
+			m_completion_live.items.push_back(create_suggestion(it));
+		}
+	}
+	m_completion_live.isIncomplete = false;
 }
 
 /**
@@ -14,16 +37,21 @@ Completion::Completion() {
  * Will parse to completion_item[]
  *
  */
-void Completion::load_json(const char* file) {
+void Completion::load_json(const char* file)
+{
 	std::filesystem::path path(file);
 	path = std::filesystem::absolute(path);
 	std::ifstream commands(path);
-	nlohmann::json json;
-	commands >> json;
+	if (commands.good())
+	{
+		nlohmann::json json;
+		commands >> json;
 
-	for (auto& [key, value] : json.items()) {
-		m_completions.items.push_back(this->create_suggestion(value));
-	};
+		for (auto& [key, value] : json.items())
+		{
+			m_completion_items.push_back(this->create_suggestion(value));
+		}
+	}
 }
 
 /**
@@ -37,12 +65,33 @@ lsp::data::completion_item Completion::create_suggestion(nlohmann::json& command
 	lsp::data::completion_item completion;
 
 	//completion.kind = lsp::data::completion_item_kind::Operator;
+	completion.sortText = command["title"];
 	completion.label = command["title"];
 	completion.data = m_index++;
 	completion.detail = command["docSyntax"];
 	completion.documentation = hint;
+	lsp::data::from_json(command, "kind", completion.kind);
 	return completion;
-};
+}
+/**
+ * Creates a completion_item from an existing variable_declaration.
+ *
+ * \param
+ * \return
+ */
+lsp::data::completion_item Completion::create_suggestion(variable_declaration::sptr& var)
+{
+	lsp::data::completion_item completion;
+
+	//completion.kind = lsp::data::completion_item_kind::Operator;
+	completion.sortText = var->variable;
+	//completion.label = command["title"];
+	completion.data = var->variable;
+	//completion.detail = command["docSyntax"];
+	//completion.documentation = hint;
+	completion.kind = lsp::data::completion_item_kind::Variable;
+	return completion;
+}
 
 /**
  * Creates the actual MarkupText shown in the documentation part of the autocompletion.
@@ -84,13 +133,4 @@ lsp::data::markup_content Completion::hint_former(nlohmann::json& command) {
 
 	// join with linebreaks
 	return lsp::data::markup_content{ lsp::data::markup_kind::Markdown, sstream.str() };
-};
-
-/**
- * Provides autocomplete list.
- *
- * \return
- */
-lsp::data::completion_list Completion::as_completion_list() {
-	return m_completions;
 };

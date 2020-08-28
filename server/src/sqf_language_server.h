@@ -50,13 +50,13 @@ protected:
     // ToDo: Add the ability to reload the config instead of just disabling it using this workaround
     bool m_read_config;
 public:
-    Completion* m_completion;
+    Completion m_completion;
     std::vector<variable_declaration::sptr> global_declarations;
     std::unordered_map<std::string, text_document> text_documents;
     lsp::data::initialize_params client;
     language_server_logger logger;
     sqf::runtime::runtime sqfvm;
-    sqf_language_server() : logger(*this), sqfvm(logger, {}), m_read_config(false), m_completion(new Completion()) {}
+    sqf_language_server() : logger(*this), sqfvm(logger, {}), m_read_config(false), m_completion() {}
     sqf_language_server(const sqf_language_server& copy) = delete;
 
     text_document& get_or_create(lsp::data::uri uri);

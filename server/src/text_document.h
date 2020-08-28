@@ -73,6 +73,7 @@ private:
     };
     std::string m_path;
     std::string m_contents;
+    std::string m_contents_orig;
     sqf::parser::sqf::impl_default::astnode m_root_ast;
     std::vector<lsp::data::folding_range> m_foldings;
     std::vector<asthint> m_asthints;
@@ -177,7 +178,7 @@ public:
         diagnostics.uri = sanitize_to_uri(path);
     }
 
-    std::string_view contents() const { return m_contents; }
+    std::string_view contents(bool preprocessed = true) const { return preprocessed ? m_contents : m_contents_orig; }
     void analyze(sqf_language_server& language_server, sqf::runtime::runtime& sqfvm, std::optional<std::string_view> contents_override);
 
     std::vector<lsp::data::folding_range>& foldings() { return m_foldings; }

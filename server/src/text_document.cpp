@@ -10,11 +10,17 @@ void text_document::recalculate_ast(
     sqf::runtime::runtime& sqfvm,
     std::optional<std::string_view> contents_override)
 {
+    if (contents_override.has_value())
+    {
+        m_contents_orig = *contents_override;
+    }
+    else
+    {
+        m_contents_orig = *sqfvm.fileio().read_file_from_disk(m_path);
+    }
     auto parser = dynamic_cast<sqf::parser::sqf::impl_default&>(sqfvm.parser_sqf());
     bool errflag = false;
-    auto preprocessed = contents_override.has_value() ?
-        sqfvm.parser_preprocessor().preprocess(sqfvm, *contents_override, { m_path, {} }) :
-        sqfvm.parser_preprocessor().preprocess(sqfvm, { m_path, {} });
+    auto preprocessed = sqfvm.parser_preprocessor().preprocess(sqfvm, m_contents_orig, { m_path, {} });
     if (preprocessed.has_value())
     {
         m_contents = preprocessed.value();

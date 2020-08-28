@@ -52,7 +52,7 @@ lsp::data::completion_item Completion::create_suggestion(nlohmann::json& command
 lsp::data::markup_content Completion::hint_former(nlohmann::json& command) {
 	std::vector<std::string> hint = {
 		"```sqf",
-		command["syntax"],
+		command["syntax"].get<std::string>(),
 		"```"
 	};
 
@@ -78,7 +78,7 @@ lsp::data::markup_content Completion::hint_former(nlohmann::json& command) {
 
 	// add clickable link for the description
 	// broken, needs casting? Who knows
-	hint.push_back("\n[Description](" + command["url"] + ')');
+	hint.push_back("\n[Description](" + command["url"].get<std::string>() + ')');
 
 	// join with linebreaks
 	std::string hint_joined = std::accumulate(std::next(hint.begin()), hint.end(), hint[0],

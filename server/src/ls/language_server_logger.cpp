@@ -2,7 +2,7 @@
 #include "sqf_language_server.h"
 #include <sstream>
 
-void language_server_logger::log(const LogMessageBase& base)
+void ls::language_server_logger::log(const LogMessageBase& base)
 {
     {
         std::stringstream sstream;

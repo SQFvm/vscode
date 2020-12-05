@@ -1,8 +1,10 @@
 #pragma once
+
 #include <string>
 #include <string_view>
 #include <array>
 #include <sstream>
+#include <functional>
 
 namespace x39
 {
@@ -635,4 +637,14 @@ namespace x39
             return sstream.str();
         }
     };
+    
 }
+template<>
+struct std::hash<x39::uri>
+{
+    std::size_t operator()(x39::uri const& uri) const noexcept
+    {
+        std::size_t h1 = std::hash<std::string_view>{}(uri.full());
+        return h1;
+    }
+};
